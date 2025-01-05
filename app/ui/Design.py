@@ -281,7 +281,7 @@ class Ui_MainWindow(object):
         # Sidebar Title
         self.sidebar_title = self.create_label(
             parent=self.sidebar_main_layout,
-            text="Declare a Song",
+            text="Weighted Blender",
             max_size=QtCore.QSize(240, 80),
             font=SIDEBAR_TITLE_FONT,
             style_sheet=LABEL_WHITE_TEXT
@@ -294,7 +294,7 @@ class Ui_MainWindow(object):
 
         self.upload_song_01_label_title = self.create_label(
             parent=self.sidebar_main_layout,
-            text="First Song",
+            text="First Audio",
             max_size=QtCore.QSize(240, 40),
             font=SECTION_FONT,
             style_sheet=LABEL_WHITE_TEXT
@@ -326,7 +326,7 @@ class Ui_MainWindow(object):
 
         self.upload_song_02_label_title = self.create_label(
             parent=self.sidebar_main_layout,
-            text="Second Song",
+            text="Second Audio",
             max_size=QtCore.QSize(240, 40),
             font=SECTION_FONT,
             style_sheet=LABEL_WHITE_TEXT
@@ -374,15 +374,15 @@ class Ui_MainWindow(object):
 
         # ========== Generate & Cancel ==========
 
-        self.clear_button = self.create_button(
+        self.reset_button = self.create_button(
             parent=self.sidebar_main_layout,
-            text="Clear",
+            text="Reset",
             max_size=QtCore.QSize(240, 40),
             style_sheet=BUTTON_STYLE,
             cursor=QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         )
 
-        self.upload_songs_layout.addWidget(self.clear_button)
+        self.upload_songs_layout.addWidget(self.reset_button)
 
     def setup_recognize_song_bar(self):
         """
@@ -398,7 +398,7 @@ class Ui_MainWindow(object):
 
         self.recognize_song_label = self.create_label(
             parent=self.recognized_song_layout,
-            text="Choose Unknown Song",
+            text="Choose Unknown Audio",
             max_size=QtCore.QSize(240, 40),
             font=SECTION_FONT,
             style_sheet=LABEL_WHITE_TEXT
@@ -541,7 +541,6 @@ class Ui_MainWindow(object):
         self.uploaded_song_01_name_label.setText(title)
 
     def update_uploaded_second_song_name(self, title):
-        title = title.replace("_", " ")
         self.uploaded_song_02_name_label.setText(title)
 
     def clear_recognized_song_data(self):
@@ -549,3 +548,8 @@ class Ui_MainWindow(object):
         self.recognized_song_label.setText("")
         self.update_uploaded_fisrt_song_name("")
         self.update_uploaded_second_song_name("")
+
+        self.songs_weight_slider.setValue(50)
+
+        self.uploaded_song_01_button.setText("Upload")
+        self.uploaded_song_02_button.setText("Upload")

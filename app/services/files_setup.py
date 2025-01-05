@@ -1,5 +1,6 @@
 import os
 import json
+import matplotlib.pyplot as plt
 from app.models.feature_extractor import FeatureExtractor
 
 
@@ -8,14 +9,16 @@ class FeatureFoldersProcessor:
         self.base_path = base_path
         self.features_path = os.path.join(os.path.dirname(base_path), "features")
         self.fingerprints_path = os.path.join(os.path.dirname(base_path), "fingerprints")
+        self.spectrograms_path = os.path.join(os.path.dirname(base_path), "spectrograms")
         self.feature_extractor = FeatureExtractor()
         self.ensure_directories()
         self.all_results, self.all_fingerprints = self.process_all_songs()
 
     def ensure_directories(self):
-        """Ensure that the features and fingerprints directories exist."""
+        """Ensure that the features, fingerprints, and spectrograms directories exist."""
         os.makedirs(self.features_path, exist_ok=True)
         os.makedirs(self.fingerprints_path, exist_ok=True)
+        os.makedirs(self.spectrograms_path, exist_ok=True)
 
     def get_song_folders(self):
         """Retrieve all song folders in the base path."""
@@ -36,6 +39,25 @@ class FeatureFoldersProcessor:
 
         with open(file_path, "w") as json_file:
             json.dump(data, json_file, indent=4)
+
+    def save_spectrogram(self, folder_name, file_name, spectrogram):
+        """Save spectrogram data to the spectrograms directory as a PNG image."""
+        folder_path = os.path.join(self.spectrograms_path, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
+        spectrogram_file = os.path.join(folder_path, f"{file_name}.png")
+
+        # Plot the spectrogram
+        plt.figure(figsize=(10, 4))
+        plt.imshow(spectrogram, aspect='auto', origin='lower', interpolation='none')
+        plt.colorbar(format='%+2.0f dB')
+        plt.title(f"Spectrogram - {file_name}")
+        plt.xlabel('Time')
+        plt.ylabel('Frequency')
+        plt.tight_layout()
+
+        # Save the plot as a PNG file
+        plt.savefig(spectrogram_file, dpi=300)
+        plt.close()  # Close the plot to free up memory
 
     def process_song_folder(self, folder_path):
         folder_name = os.path.basename(folder_path)
@@ -65,12 +87,22 @@ class FeatureFoldersProcessor:
                     print(f"[Error] Skipping {file_path} due to failed spectrogram generation.")
                     continue
 
+                # Save spectrogram data
+                self.save_spectrogram(folder_name, file_name, spectrogram)
+
+                # Extract features
+                features = self.feature_extractor.extract_features(spectrogram, sr)
+                if not features:
+                    print(f"[Error] Skipping {file_path} due to empty features.")
+                    continue
+
+                # Generate fingerprint
                 fingerprint = self.feature_extractor.generate_perceptual_hash(spectrogram)
                 if not fingerprint:
                     print(f"[Error] Skipping {file_path} due to failed fingerprint generation.")
                     continue
 
-                results[file_name] = {"spectrogram": "processed"}
+                results[file_name] = features
                 fingerprints[file_name] = fingerprint
 
         self.save_to_json(folder_name, results, "features")

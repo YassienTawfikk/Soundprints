@@ -59,23 +59,29 @@ class SongMixer:
         if not (0 <= weight <= 100):
             raise ValueError("Weight must be in the range 0 to 100.")
 
-        weight01 = weight / 100
-        weight02 = 1 - weight01
+        # Calculate weights proportionally based on the slider value
+        weight01 = weight  # Weight for the first song (e.g., 75 if slider is at 75%)
+        weight02 = 100 - weight  # Weight for the second song (e.g., 25 if slider is at 75%)
 
-        # Create the mixed audio
-        mixed_audio = (weight01 * self.audio01) + (weight02 * self.audio02)
+        # Normalize weights so the larger weight is 100%
+        max_weight = max(weight01, weight02)
+        weight01 = (weight01 / max_weight) * 100
+        weight02 = (weight02 / max_weight) * 100
+
+        # Scale audio signals according to the adjusted weights
+        mixed_audio = (weight01 / 100 * self.audio01) + (weight02 / 100 * self.audio02)
         mixed_audio = np.clip(mixed_audio, -1.0, 1.0)  # Normalize to avoid clipping
 
         return mixed_audio
 
-    def save_mixed_audio(self, weight, output_filename='generated_mixed_song.wav'):
+    def save_mixed_audio(self, weight, output_filename='mixed song.wav'):
         """
         Save the mixed audio to a file.
         :param weight: Weight of the first song (0-100).
         :param output_filename: Name of the output file.
         :return: Path to the saved mixed audio file.
         """
-        output_folder = 'static/generate_song'
+        output_folder = 'static/generated mixed song'
 
         # Check if the folder exists, and create it if it doesn't
         if not os.path.exists(output_folder):

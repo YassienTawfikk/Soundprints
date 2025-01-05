@@ -30,7 +30,7 @@ class MainWindowController(QtWidgets.QMainWindow):
         self.ui.recognize_song_button.clicked.connect(self.upload_unkonw_sound)
         self.ui.uploaded_song_01_button.clicked.connect(self.set_mixer_first_song_filepath)
         self.ui.uploaded_song_02_button.clicked.connect(self.set_mixer_second_song_filepath)
-        self.ui.clear_button.clicked.connect(self.reset_filepaths)
+        self.ui.reset_button.clicked.connect(self.reset_filepaths)
         self.ui.songs_weight_slider.valueChanged.connect(self.ui.update_song_weight_slider_label)
         self.ui.songs_weight_slider.sliderReleased.connect(self.generate_mixed_song)
 
@@ -59,13 +59,15 @@ class MainWindowController(QtWidgets.QMainWindow):
             self.ui.update_recognized_song_data("No match found")
             return
 
+        _, _, best_match_song_type = Table[0]
         # Populate the table with results
         for song_name, similarity_index, song_type in Table:
+            # if best_match_song_type == song_type:
             self.ui.add_row_to_index_table(
-                song_name,
-                f"{similarity_index * 100:.2f}%",  # Convert to percentage
-                song_type
-            )
+                    song_name,
+                    f"{similarity_index * 100:.2f}%",  # Convert to percentage
+                    song_type
+                )
 
         # The top match (first in sorted list) is the recognized song
         best_match, _, _ = Table[0]
@@ -77,14 +79,10 @@ class MainWindowController(QtWidgets.QMainWindow):
             self.mixer_filepath01 = file_path
             self.ui.uploaded_song_01_button.setText("Uploaded")
 
-            # Extract folder and file names
-            folder_name = os.path.basename(os.path.dirname(file_path))  # Folder name
-            folder_name = folder_name.replace("_", " ")
-
             file_name = os.path.splitext(os.path.basename(file_path))[0]  # File name without extension
-
+            file_name = file_name.replace("_", " ")
             # Format the song name
-            song_name = f"{folder_name} ({file_name})"
+            song_name = f"{file_name}"
 
             # Update the UI with the formatted song name
             self.ui.update_uploaded_fisrt_song_name(song_name)
@@ -95,14 +93,10 @@ class MainWindowController(QtWidgets.QMainWindow):
             self.mixer_filepath02 = file_path
             self.ui.uploaded_song_02_button.setText("Uploaded")
 
-            # Extract folder and file names
-            folder_name = os.path.basename(os.path.dirname(file_path))  # Folder name
-            folder_name = folder_name.replace("_", " ")
-
             file_name = os.path.splitext(os.path.basename(file_path))[0]  # File name without extension
-
+            file_name = file_name.replace("_", " ")
             # Format the song name
-            song_name = f"{folder_name} ({file_name})"
+            song_name = f"{file_name}"
 
             # Update the UI with the formatted song name
             self.ui.update_uploaded_second_song_name(song_name)
@@ -110,8 +104,7 @@ class MainWindowController(QtWidgets.QMainWindow):
     def reset_filepaths(self):
         self.mixer_filepath01 = None
         self.mixer_filepath02 = None
-        self.ui.uploaded_song_01_button.setText("Upload")
-        self.ui.uploaded_song_02_button.setText("Upload")
+
         self.ui.clear_index_table_data()
         self.ui.clear_recognized_song_data()
 

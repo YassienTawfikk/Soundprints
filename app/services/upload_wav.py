@@ -1,10 +1,10 @@
 import os
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
-import numpy as np
+from PyQt5.QtWidgets import QFileDialog
 
 
 class AudioFileUploader:
     last_opened_folder = "/"
+
 
     @classmethod
     def upload_audio_signal_file(cls):
