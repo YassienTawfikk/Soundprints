@@ -173,5 +173,13 @@ The app generates perceptual hashes for the audio files:
         <sub><b>Nancy Mahmoud</b></sub>
       </a>
     </td>
+    </td>
+        <td align="center">
+      <a href="https://github.com/yousseftaha167" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/128304243?v=4" width="150px;" alt="Youssef Taha"/>
+        <br />
+        <sub><b>Youssef Taha</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
